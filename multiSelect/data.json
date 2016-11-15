@@ -1,0 +1,12 @@
+{
+  "data" : [
+    { "value": "aa", "text":"这是aa"},
+    { "value": "bb", "text":"这是bb"},
+    { "value": "cc", "text":"这是cc"},
+    { "value": "dd", "text":"这是dd"},
+    { "value": "ee", "text":"这是ee"},
+    { "value": "ff", "text":"这是ff"},
+    { "value": "gg", "text":"这是gg"},
+    { "value": "hh", "text":"这是hh"}
+  ]
+}

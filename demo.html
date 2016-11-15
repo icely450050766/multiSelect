@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title> 多选下拉列表 </title>
+    <link rel="stylesheet" type="text/css" href="multiSelect/multiSelect.css">
+</head>
+<body>
+
+    <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="multiSelect/multiSelect.js"></script>
+
+    <script>
+        var _url = 'multiSelect/data.json';
+
+        // 参数：承载多选下拉列表的元素jq对象，下拉列表的宽度、获取option的url、获取option的data、option的value字段、option的text字段
+        multiSelect.init( $('body'), '400px', _url, {}, 'value', 'text' );
+    </script>
+</body>
+</html>

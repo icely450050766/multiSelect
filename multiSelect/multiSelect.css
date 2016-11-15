@@ -1,0 +1,55 @@
+.multiSelect{
+    width: 400px;
+    cursor: pointer;
+
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+.multiSelect *{
+    font-size: 15px;
+    line-height: 150%;
+}
+
+.multiSelect > *{
+    width: 100%;
+    border: 1px solid rgba(0,0,0,0.3);
+    box-sizing: border-box; /* width/height属性指的是border + padding + content */
+    position: relative;
+    overflow: hidden;
+}
+.multiSelect .multiSelect-result{
+    min-height: 35px;
+    border-color: rgba(0,0,0,0.4);
+}
+.multiSelect .multiSelect-result,
+.multiSelect .multiSelect-options > option{
+    padding: 0.5% 2%;
+}
+
+.multiSelect .multiSelect-result.focusClass{
+    border-color: rgb(30,144,255);
+}
+.multiSelect .multiSelect-options > option:hover{
+    background: rgb(30,144,255);
+    color: #ffffff;
+}
+
+/* 已选的option 显示box */
+.multiSelect .multiSelect-result .resultBox{
+    height: 75%;
+    margin-right: 10px;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 5px;
+    display: inline-block;
+}
+.multiSelect .multiSelect-result .resultBox > *{
+    padding: 0px 5px;
+    /* height: 50px; */
+    display: table-cell; /* height 不能用百分比 */
+    vertical-align: middle;
+}
+.multiSelect .multiSelect-result .resultBox .item,
+.multiSelect .multiSelect-result .resultBox .removeItem{
+    font-size: 12px;
+}
