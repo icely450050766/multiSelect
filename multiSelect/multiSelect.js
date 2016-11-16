@@ -1,138 +1,200 @@
 /**
  * Created by Administrator on 2016/11/15.
  */
-var multiSelect = ( function ($) {
-    return{
 
-        $multiSelect: null,
+// åˆå§‹åŒ–ï¼ˆå‚æ•°ï¼šæ‰¿è½½å¤šé€‰ä¸‹æ‹‰åˆ—è¡¨çš„å…ƒç´ jqå¯¹è±¡ï¼Œä¸‹æ‹‰åˆ—è¡¨çš„å®½åº¦ã€è·å–optionçš„urlã€è·å–optionçš„dataã€optionçš„valueå­—æ®µã€optionçš„textå­—æ®µã€æ˜¯å¦å¯è¾“å…¥ï¼ˆæ¨¡ç³Šæœç´¢ï¼‰ï¼‰
+function MultiSelect( $parent, width, getOptionURL, getOptionData, optionValue, optionText, isInput ) {
 
-        // ³õÊ¼»¯£¨²ÎÊı£º³ĞÔØ¶àÑ¡ÏÂÀ­ÁĞ±íµÄÔªËØjq¶ÔÏó£¬ÏÂÀ­ÁĞ±íµÄ¿í¶È¡¢»ñÈ¡optionµÄurl¡¢»ñÈ¡optionµÄdata¡¢optionµÄvalue×Ö¶Î¡¢optionµÄtext×Ö¶Î£©
-        init: function( $parent, width, getOptionURL, getOptionData, optionValue, optionText ){
+    // æ˜¯å¦å¯è¾“å…¥ï¼ˆtrueï¼šæ ¹æ®è¾“å…¥ æ¨¡ç³Šæœç´¢ï¼Œæ˜¾ç¤ºåŒ¹é…optionï¼›falseï¼šç‚¹å‡»æ˜¾ç¤ºæ‰€æœ‰optionï¼‰
+    this.isInput = ( isInput != undefined ? isInput : false ); // é»˜è®¤ ä¸å¯è¾“å…¥
+    this. $multiSelect = null;
 
-            this.appendHtml( $parent, width );// ²åÈëhtmlÔªËØ, ³õÊ¼»¯ÊôĞÔ $multiSelect
-            this.getOptions( getOptionURL, getOptionData, optionValue, optionText );// »ñÈ¡ option Êı¾İ
+    this.appendHtml( $parent, width );// æ’å…¥htmlå…ƒç´ , åˆå§‹åŒ–å±æ€§ $multiSelect
+    this.getOptions( getOptionURL, getOptionData, optionValue, optionText );// è·å– option æ•°æ®
 
-            this.addClickEvent();// Ìí¼Óµã»÷ÊÂ¼ş
-            this.$multiSelect.find('.multiSelect-options').hide();// Ä¬ÈÏ ÏÂÀ­Ïî Òş²Ø
-        },
+    this.addClickEvent();// æ·»åŠ ç‚¹å‡»äº‹ä»¶
+    this.$multiSelect.find('.multiSelect-options').hide();// é»˜è®¤ ä¸‹æ‹‰é¡¹ éšè—
+}
 
-        // ²åÈëhtmlÔªËØ, ³õÊ¼»¯ÊôĞÔ $multiSelect
-        appendHtml: function( $parent, width ){
+//////////////////////////////////////////////////////////////////////////////////////
 
-            var _str = '<div class="multiSelect">' +
-                            '<div class="multiSelect-result"></div>' +
-                            '<div class="multiSelect-options"></div>' +
-                        '</div>';
+// æ’å…¥htmlå…ƒç´ , åˆå§‹åŒ–å±æ€§ $multiSelect
+MultiSelect.prototype.appendHtml = function( $parent, width ){
 
-            this.$multiSelect = $( _str );
-            this.$multiSelect.css( 'width', width );// ÉèÖÃ ¶àÑ¡ÏÂÀ­ÁĞ±íµÄ¿í¶È
+    var _str = '<div class="multiSelect">' +
+        '<div class="multiSelect-result" contenteditable="' + ( this.isInput ? 'true' : 'false' ) + '">' +
+        '<i class="fa ' + ( this.isInput ?  '' : 'fa-sort-down' ) + '"></i> </div>' + // å‘ä¸‹ç®­å¤´
+        '<div class="multiSelect-options"></div>' +
+        '</div>';
 
-            $parent.append( this.$multiSelect );// ²åÈë
-        },
+    this.$multiSelect = $( _str );
+    this.$multiSelect.css( 'width', width );// è®¾ç½® å¤šé€‰ä¸‹æ‹‰åˆ—è¡¨çš„å®½åº¦
 
-        // »ñÈ¡ option Êı¾İ£¨²ÎÊı£º»ñÈ¡optionµÄurl¡¢»ñÈ¡optionµÄdata¡¢optionµÄvalue×Ö¶Î¡¢optionµÄtext×Ö¶Î£©
-        getOptions: function( getOptionURL, getOptionData, optionValue, optionText ){
-            var _self = this;
+    $parent.append( this.$multiSelect );// æ’å…¥
+};
 
-            // ÇëÇóÊı¾İ
-            this.postData( getOptionURL, getOptionData, function( data ){
-                //console.log( data );
-                data = data.data;
+// è·å– option æ•°æ®ï¼ˆå‚æ•°ï¼šè·å–optionçš„urlã€è·å–optionçš„dataã€optionçš„valueå­—æ®µã€optionçš„textå­—æ®µï¼‰
+MultiSelect.prototype.getOptions = function( getOptionURL, getOptionData, optionValue, optionText ){
+    var _self = this;
 
-                var _content = '';
-                for( var i=0; i < data.length; i++ ){
-                    _content += '<option value="' + data[i][optionValue] + '">' + data[i][optionText] + '</option>';
-                }
-                _self.$multiSelect.find('.multiSelect-options').html( _content );// ²åÈëoption
+    // è¯·æ±‚æ•°æ®
+    this.postData( getOptionURL, getOptionData, function( data ){
+        //console.log( data );
+        data = data.data;
 
-            }, function(){
-                alertg('»ñÈ¡ÏÂÀ­ÁĞ±íÊı¾İÊ§°Ü£¡')
-            });
-        },
-
-
-        // ÉèÖÃ Ä³¸ö resultBoxÑùÊ½ £¨²ÎÊı£ºÄ³¸ö .resultBox µÄjq¶ÔÏó£©
-        setResultBoxStyle: function( $resultBox ){
-
-            var _height = $resultBox.height();
-
-            // ÉèÖÃ ÒÑÑ¡ÔñµÄ resultBox ¶ù×ÓÔªËØµÄ ¸ß¶È£¨´¹Ö±¾ÓÖĞ£©
-            $resultBox.children().css( 'height', _height + 'px' );
-
-            // ÉèÖÃ ÒÑÑ¡ÔñµÄ resultBox µÄ margin £¨´¹Ö±¾ÓÖĞ£©
-            //$resultBox.css( 'margin-top', ( $resultBox.parent().height() - _height ) / 2  + 'px' );
-        },
-
-        // Ìí¼Óµã»÷ÊÂ¼ş
-        addClickEvent: function(){
-
-            var _self = this;
-
-            // ÊÕÆğ ÏÂÀ­ÁĞ±íÏî£¨µã»÷¿Õ°×³õÊÕÆğ£¬:root³äÂúÈ«ÆÁ£©
-            $(document).on('click', ':root', function(e){
-                _self.$multiSelect.find('.multiSelect-result').removeClass('focusClass');// Ê§È¥ ½¹µãÑùÊ½
-                _self.$multiSelect.find('.multiSelect-options').hide();// ÊÕÆğÏÂÀ­ÁĞ±íÏî
-            });
-
-            // Õ¹¿ª ÏÂÀ­ÁĞ±íÏî
-            _self.$multiSelect.on('click', '.multiSelect-result', function(e){
-
-                // ±È $(document).on ¸üÓÅÏÈ²¶×½ µã»÷ÊÂ¼ş¡£
-                // Èç¹û$(document).on¼àÌı µã»÷É¾³ı°´Å¥ ÊÂ¼ş¡£µã»÷É¾³ı°´Å¥£¬Ò²ÊÇ±¾ÊÂ¼ş ÏÈ±»²¶×½Ö´ĞĞ
-                e.stopImmediatePropagation();// ²»ÏòÉÏ´«µİÊÂ¼ş
-
-                $(this).addClass('focusClass');// µÃµ½ ½¹µãÑùÊ½
-                _self.$multiSelect.find('.multiSelect-options').show();// Õ¹¿ªÏÂÀ­ÁĞ±íÏî
-            });
-
-            // µã»÷ ÏÂÀ­ÁĞ±íÏîÖĞ Ä³Ò»Ïî
-            _self.$multiSelect.on('click', '.multiSelect-options option', function(e){
-
-                e.stopImmediatePropagation(); // ²»ÏòÉÏ´«µİÊÂ¼ş
-
-                var $str = $('<div class="resultBox">' +
-                                '<div>' +
-                                    '<span class="item" value="' + $(this).val() + '">' + $(this).text() + '</span> ' +
-                                    '<span class="removeItem">&times;</span> ' +
-                                '</div>' +
-                            '</div>');
-
-                _self.$multiSelect.find('.multiSelect-result').append( $str );// Ñ¡ÖĞ£¬Ìí¼Ó
-                _self.setResultBoxStyle( $str ); // ÉèÖÃ resultBoxÑùÊ½
-                _self.addRemoveItemClickEvent( $('.removeItem', $str) );// Ìí¼Ó É¾³ı°´Å¥ Ò»´ÎĞÔµã»÷ÊÂ¼ş
-
-                $(this).remove();// ÒÆ³ı ÒÑÑ¡ÔñµÄ ÏÂÀ­Ïî
-            });
-
-        },
-
-        // Ìí¼Ó É¾³ı°´Å¥ Ò»´ÎĞÔµã»÷ÊÂ¼ş£¨²ÎÊı£ºÉ¾³ı°´Å¥jq¶ÔÏó£©
-        addRemoveItemClickEvent: function( $item ){
-            var _self = this;
-
-            $item.one( 'click', function(e){
-
-                e.stopImmediatePropagation(); // ²»ÏòÉÏ´«µİÊÂ¼ş
-                var $item = $(this).prev('.item');
-
-                var $str = $('<option value="' + $item.attr('value') + '">' + $item.text() + '</option>');
-                _self.$multiSelect.find('.multiSelect-options').prepend( $str );// ½«±»ÒÆ³ıµÄÏî£¬Ìí¼Óµ½ÏÂÀ­ÁĞ±í
-
-                $(this).parents('.resultBox').remove();// ÒÆ³ı
-            });
-        },
-
-
-        // postÇëÇó
-        postData: function( url, data, successFunc, errFunc ){
-            $.ajax({
-                url : url,
-                data : data,
-                type: 'POST',
-                success: function( data ){ if( successFunc ) successFunc(data); },
-                error: function( err ){ if( errFunc ) errFunc(err); }
-            });
+        var _content = '';
+        for( var i=0; i < data.length; i++ ){
+            _content += '<option value="' + data[i][optionValue] + '" text="' + data[i][optionText] + '">' + data[i][optionText] + '</option>';
         }
+        _self.$multiSelect.find('.multiSelect-options').html( _content );// æ’å…¥option
+
+    }, function(){
+        alertg('è·å–ä¸‹æ‹‰åˆ—è¡¨æ•°æ®å¤±è´¥ï¼')
+    });
+};
+
+// è®¾ç½® æŸä¸ª resultBoxæ ·å¼ ï¼ˆå‚æ•°ï¼šæŸä¸ª .resultBox çš„jqå¯¹è±¡ï¼‰
+MultiSelect.prototype.setResultBoxStyle = function( $resultBox ){
+
+    var _height = $resultBox.height();
+
+    // è®¾ç½® å·²é€‰æ‹©çš„ resultBox å„¿å­å…ƒç´ çš„ é«˜åº¦ï¼ˆå‚ç›´å±…ä¸­ï¼‰
+    $resultBox.children().css( 'height', _height + 'px' );
+
+    // è®¾ç½® å·²é€‰æ‹©çš„ resultBox çš„ margin ï¼ˆå‚ç›´å±…ä¸­ï¼‰
+    //$resultBox.css( 'margin-top', ( $resultBox.parent().height() - _height ) / 2  + 'px' );
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+// æ·»åŠ ç‚¹å‡»äº‹ä»¶
+MultiSelect.prototype.addClickEvent = function(){
+
+    var _self = this;
+
+    // æ”¶èµ· ä¸‹æ‹‰åˆ—è¡¨é¡¹ï¼ˆç‚¹å‡»ç©ºç™½åˆæ”¶èµ·ï¼Œ:rootå……æ»¡å…¨å±ï¼‰
+    $(document).on('click', ':root', function(e){
+        _self.$multiSelect.find('.multiSelect-result').removeClass('focusClass');// å¤±å» ç„¦ç‚¹æ ·å¼
+        _self.$multiSelect.find('.multiSelect-options').hide();// æ”¶èµ·ä¸‹æ‹‰åˆ—è¡¨é¡¹
+    });
+
+
+    // ï¼ˆä¸å¯è¾“å…¥ï¼‰ç‚¹å‡» .multiSelect-resultï¼Œå±•å¼€ ä¸‹æ‹‰åˆ—è¡¨é¡¹
+    _self.$multiSelect.on('click', '.multiSelect-result', function(e){
+
+        // æ¯” $(document).on æ›´ä¼˜å…ˆæ•æ‰ ç‚¹å‡»äº‹ä»¶ã€‚
+        // å¦‚æœ$(document).onç›‘å¬ ç‚¹å‡»åˆ é™¤æŒ‰é’® äº‹ä»¶ã€‚ç‚¹å‡»åˆ é™¤æŒ‰é’®ï¼Œä¹Ÿæ˜¯æœ¬äº‹ä»¶ å…ˆè¢«æ•æ‰æ‰§è¡Œ
+        e.stopImmediatePropagation();// ä¸å‘ä¸Šä¼ é€’äº‹ä»¶
+
+        $(':root').trigger('click');// å…¶ä»–å¤šé€‰ä¸‹æ‹‰èœå• å¤±å»ç„¦ç‚¹
+        $(this).addClass('focusClass');// è¢«ç‚¹å‡»çš„ å¾—åˆ° ç„¦ç‚¹æ ·å¼
+        if( !_self.isInput ) _self.$multiSelect.find('.multiSelect-options').show();// å±•å¼€ä¸‹æ‹‰åˆ—è¡¨é¡¹
+    });
+
+    // ï¼ˆå¯è¾“å…¥ï¼‰ æ¨¡ç³Šæœç´¢ï¼Œæœ‰åŒ¹é…é¡¹ï¼Œå±•å¼€ ä¸‹æ‹‰åˆ—è¡¨é¡¹
+    _self.$multiSelect.on('keyup', '.multiSelect-result', function(e){
+
+        if( _self.isInput ){ // å¯è¾“å…¥ çš„æƒ…å†µ
+
+            var $resultTemp = $(this).clone( false ); //  æµ…å¤åˆ¶èŠ‚ç‚¹ï¼ˆä¸åŒ…æ‹¬äº‹ä»¶ï¼‰ï¼Œé¿å…ç›´æ¥æ“ä½œ .multiSelect-result
+            $resultTemp.children('.resultBox').remove(); // ç§»é™¤ .resultBox
+            var _input = $resultTemp.text();// è·å– ç”¨æˆ·è¾“å…¥
+            //console.log( _input );
+
+            // é»˜è®¤æ“ä½œ
+            _self.$multiSelect.find('.multiSelect-options > option').hide(); // éšè— æ‰€æœ‰é€‰é¡¹
+            _self.$multiSelect.find('.multiSelect-options').hide();// æ”¶èµ·ä¸‹æ‹‰åˆ—è¡¨é¡¹
+
+            // æŸ¥æ‰¾åŒ¹é…é¡¹ å¹¶æ˜¾ç¤º
+            var $matchOptions = _self.$multiSelect.find('.multiSelect-options > option[text *= ' + _input + ']');
+            $matchOptions.show(); // æ˜¾ç¤º åŒ¹é…é€‰é¡¹
+            if( $matchOptions.length ) _self.$multiSelect.find('.multiSelect-options').show();// æœ‰åŒ¹é…é¡¹ æ‰å±•å¼€ ä¸‹æ‹‰åˆ—è¡¨é¡¹
+
+        }
+    });
+
+
+    // ç‚¹å‡» ä¸‹æ‹‰åˆ—è¡¨é¡¹ä¸­ æŸä¸€é¡¹
+    _self.$multiSelect.on('click', '.multiSelect-options option', function(e){
+
+        e.stopImmediatePropagation(); // ä¸å‘ä¸Šä¼ é€’äº‹ä»¶
+        var $multiSelectResult = _self.$multiSelect.find('.multiSelect-result');
+
+        // å¯è¾“å…¥ï¼ˆæ¨¡ç³Šæœç´¢ï¼‰å…ˆæ¸…ç©º ç”¨æˆ·è¾“å…¥
+        if( _self.isInput ){
+            var $resultBox = $multiSelectResult.children('.resultBox').clone( true ); // æ·±å¤åˆ¶ï¼ˆåŒ…æ‹¬äº‹ä»¶ï¼‰
+            $multiSelectResult.html( $resultBox);
+        }
+
+        var $str = $('<div class="resultBox" contenteditable="false">' +
+            '<div>' +
+            '<span class="item" value="' + $(this).val() + '">' + $(this).text() + '</span> ' +
+            '<span class="removeItem">&times;</span> ' +
+            '</div>' +
+            '</div>');
+
+        $multiSelectResult.append( $str).focus();// æ·»åŠ  é€‰ä¸­é¡¹
+        _self.setResultBoxStyle( $str ); // è®¾ç½® resultBoxæ ·å¼
+        _self.editDivFocusEnd( $multiSelectResult );// å¯ç¼–è¾‘çš„ div.multiSelect-resultï¼Œå…‰æ ‡å®šä½åˆ°æœ€å
+
+        _self.addRemoveItemClickEvent( $('.removeItem', $str) );// æ·»åŠ  åˆ é™¤æŒ‰é’® ä¸€æ¬¡æ€§ç‚¹å‡»äº‹ä»¶
+        $(this).remove();// ç§»é™¤ å·²é€‰æ‹©çš„ ä¸‹æ‹‰é¡¹
+    });
+
+};
+
+// æ·»åŠ  åˆ é™¤æŒ‰é’® ä¸€æ¬¡æ€§ç‚¹å‡»äº‹ä»¶ï¼ˆå‚æ•°ï¼šåˆ é™¤æŒ‰é’®jqå¯¹è±¡ï¼‰
+MultiSelect.prototype.addRemoveItemClickEvent = function( $item ){
+    var _self = this;
+
+    $item.one( 'click', function(e){
+        e.stopImmediatePropagation(); // ä¸å‘ä¸Šä¼ é€’äº‹ä»¶
+        var $item = $(this).prev('.item');
+
+        var $str = $('<option value="' + $item.attr('value') + '" text="' + $item.text() + '">' + $item.text() + '</option>');
+        _self.$multiSelect.find('.multiSelect-options').prepend( $str );// å°†è¢«ç§»é™¤çš„é¡¹ï¼Œæ·»åŠ åˆ°ä¸‹æ‹‰åˆ—è¡¨
+
+        $(this).parents('.resultBox').remove();// ç§»é™¤
+
+        // å¯ç¼–è¾‘çš„ div.multiSelect-resultï¼Œå…‰æ ‡å®šä½åˆ°æœ€å
+        var $multiSelectResult = _self.$multiSelect.find('.multiSelect-result');
+        _self.editDivFocusEnd( $multiSelectResult );
+    });
+};
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+// å¯ç¼–è¾‘çš„divï¼Œå…‰æ ‡å®šä½åˆ°æœ€å
+MultiSelect.prototype.editDivFocusEnd = function( $div ) {
+
+    var domDiv = $div[0];// jq å¯¹è±¡è½¬domå¯¹è±¡
+    domDiv.focus();
+
+    if( $.support.msie ) {
+        var range = document.selection.createRange();
+        this.last = range;
+        range.moveToElementText( domDiv );
+        range.select();
+        document.selection.empty(); //å–æ¶ˆé€‰ä¸­
+
+    }else {
+        var range = document.createRange();
+        range.selectNodeContents( domDiv );
+        range.collapse(false);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
     }
-})( jQuery );
+};
+
+// postè¯·æ±‚
+MultiSelect.prototype.postData = function( url, data, successFunc, errFunc ){
+    $.ajax({
+        url : url,
+        data : data,
+        type: 'POST',
+        success: function( data ){ if( successFunc ) successFunc(data); },
+        error: function( err ){ if( errFunc ) errFunc(err); }
+    });
+};
 

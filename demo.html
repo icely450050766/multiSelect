@@ -3,18 +3,25 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title> 多选下拉列表 </title>
+
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="multiSelect/multiSelect.css">
-</head>
-<body>
 
     <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="multiSelect/multiSelect.js"></script>
+</head>
+<body>
+
+    <div class="multiSelectDiv1"> <p>用户可输入，返回模糊搜索结果：</p> </div>
+    <div class="multiSelectDiv2"> <p>用户不可输入，返回全部结果：</p> </div>
 
     <script>
         var _url = 'multiSelect/data.json';
 
         // 参数：承载多选下拉列表的元素jq对象，下拉列表的宽度、获取option的url、获取option的data、option的value字段、option的text字段
-        multiSelect.init( $('body'), '400px', _url, {}, 'value', 'text' );
+        var multiSelect1 = new MultiSelect( $('.multiSelectDiv1'), '450px', _url, {}, 'value', 'text', true );
+        var multiSelect2 = new MultiSelect( $('.multiSelectDiv2'), '450px', _url, {}, 'value', 'text', false );
     </script>
+
 </body>
 </html>
