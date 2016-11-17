@@ -61,3 +61,6 @@
 .multiSelect .multiSelect-result .resultBox .removeItem{
     font-size: 12px;
 }
+.multiSelect .multiSelect-result .resultBox .removeItem{
+    cursor: pointer;
+}

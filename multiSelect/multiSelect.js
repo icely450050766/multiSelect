@@ -113,6 +113,20 @@ MultiSelect.prototype.addClickEvent = function(){
         }
     });
 
+    // 点击 删除按钮
+    _self.$multiSelect.on( 'click', '.removeItem', function(e){
+        e.stopImmediatePropagation(); // 不向上传递事件
+
+        var $item = $(this).prev('.item');
+        var $str = $('<option value="' + $item.attr('value') + '" text="' + $item.text() + '">' + $item.text() + '</option>');
+        _self.$multiSelect.find('.multiSelect-options').prepend( $str );// 将被移除的项，添加到下拉列表
+
+        $(this).parents('.resultBox').remove();// 移除
+
+        // 可编辑的 div.multiSelect-result，光标定位到最后
+        var $multiSelectResult = _self.$multiSelect.find('.multiSelect-result');
+        _self.editDivFocusEnd( $multiSelectResult );
+    });
 
     // 点击 下拉列表项中 某一项
     _self.$multiSelect.on('click', '.multiSelect-options option', function(e){
@@ -137,29 +151,9 @@ MultiSelect.prototype.addClickEvent = function(){
         _self.setResultBoxStyle( $str ); // 设置 resultBox样式
         _self.editDivFocusEnd( $multiSelectResult );// 可编辑的 div.multiSelect-result，光标定位到最后
 
-        _self.addRemoveItemClickEvent( $('.removeItem', $str) );// 添加 删除按钮 一次性点击事件
         $(this).remove();// 移除 已选择的 下拉项
     });
 
-};
-
-// 添加 删除按钮 一次性点击事件（参数：删除按钮jq对象）
-MultiSelect.prototype.addRemoveItemClickEvent = function( $item ){
-    var _self = this;
-
-    $item.one( 'click', function(e){
-        e.stopImmediatePropagation(); // 不向上传递事件
-        var $item = $(this).prev('.item');
-
-        var $str = $('<option value="' + $item.attr('value') + '" text="' + $item.text() + '">' + $item.text() + '</option>');
-        _self.$multiSelect.find('.multiSelect-options').prepend( $str );// 将被移除的项，添加到下拉列表
-
-        $(this).parents('.resultBox').remove();// 移除
-
-        // 可编辑的 div.multiSelect-result，光标定位到最后
-        var $multiSelectResult = _self.$multiSelect.find('.multiSelect-result');
-        _self.editDivFocusEnd( $multiSelectResult );
-    });
 };
 
 //////////////////////////////////////////////////////////////////////////////////////
